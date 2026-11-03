@@ -1,6 +1,7 @@
 ## Unreleased
 
 - `ExpressPromptGenerator` teaches `Event(name, context?, userMessage=...)` in rule 8 for v1.0+ catalogs, while keeping the two-argument `Event(name, context)` rule for pre-v1.0 catalogs ([#3690](https://github.com/a2ui-project/a2ui/issues/3690), [#3867](https://github.com/a2ui-project/a2ui/pull/3867)).
+- Add v1.0 Agent Function and Renderer Function RPC helpers (`AgentFunctionRegistry`, `RendererFunctionCalls`, and `RendererMessageRouter`) and re-export `AgentFunction`, `createAgentFunction`, `isAgentFunction`, `A2uiRpcError`, `RpcErrorCode`, and v1.0 RPC message types from `@a2ui/web_core`. `AgentFunctionRegistry` dispatches inbound `callAgentFunction` envelopes to registered `AgentFunction` handlers with Zod argument validation, bounded concurrency, timeouts, cancellation, and disposal. `RendererFunctionCalls` formats outbound `callRendererFunction` envelopes and correlates `rendererFunctionResponse` replies with pending call limits, timeouts, cancellation, and disposal. `RendererMessageRouter` routes inbound `RendererToAgentMessage` payloads across `callAgentFunction`, `rendererFunctionResponse`, `action`, `error`, and unhandled fallbacks.
 
 ## 0.1.0
 
