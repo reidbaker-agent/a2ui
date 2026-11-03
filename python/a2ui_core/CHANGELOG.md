@@ -6,17 +6,6 @@
   Recommended migration: bind `value` to a data model path, such as
   `{"@path": "/form/email"}`. The path does not have to exist yet
   ([#3830](https://github.com/a2ui-project/a2ui/issues/3830), [#3868](https://github.com/a2ui-project/a2ui/pull/3868)).
-- (v1_0) Add `AgentFunction`, a catalog function that runs on the agent: a
-  `FunctionApi` with a `handler` that receives the validated arguments and an
-  `AgentFunctionContext` (catalog, surface and function call IDs). `Catalog`
-  and `Catalog.copy_with` take `agent_functions`, which adds them to
-  `functions`, so validation and `to_json` treat them like any other declared
-  function, and `Catalog.agent_functions` lists them. The catalog document
-  never includes the handler. An agent function needs a name of its own, unless
-  it is built with `AgentFunction.from_api` from a function the catalog already
-  declares, which it then replaces; a catalog before v1.0 rejects agent
-  functions. Also exported: `AgentFunctionHandler`.
-  [#3536](https://github.com/a2ui-project/a2ui/issues/3536)
 - (v1_0) The basic catalog `regex` function's `pattern` description now names
   the A2UI regex dialect and its safety limits
   ([#3820](https://github.com/a2ui-project/a2ui/pull/3820)).
@@ -150,6 +139,24 @@
   it is standalone.
   [#3232](https://github.com/a2ui-project/a2ui/issues/3232),
   [#3575](https://github.com/a2ui-project/a2ui/pull/3575)
+- (v1_0) Add `AgentFunction`, a catalog function that runs on the agent: a
+  `FunctionApi` with a `handler` that receives the validated arguments and,
+  if it takes a second parameter, an `AgentFunctionContext` (catalog, surface
+  and function call IDs). Add agent functions to a loaded catalog with
+  `Catalog.copy_with(agent_functions=...)`, or to a catalog built in code in
+  its `functions`; validation and `to_json` treat them like any other declared
+  function. `Catalog.agent_functions` lists them, and
+  `Catalog.renderer_functions` lists the other functions. The catalog document
+  never includes the handler. An agent function built directly is
+  `rendererOnly` and needs a name of its own; `AgentFunction.from_api` builds
+  one from a function the catalog declares, which it then replaces, keeps its
+  `allowedCallers`, and rejects an `agentOnly` declaration. A catalog rejects
+  an agent function built from a function it doesn't declare, two agent
+  functions with one name, and agent functions before v1.0. `AgentFunction`,
+  `AgentFunctionContext` and `AgentFunctionHandler` are exported from
+  `a2ui.core`
+  ([#3536](https://github.com/a2ui-project/a2ui/issues/3536),
+  [#3792](https://github.com/a2ui-project/a2ui/pull/3792)).
 - Add `Catalog.derive`, which builds a catalog with a new `catalog_id` from
   the named `components` and `functions` of an existing one and new entries,
   with the `instructions` it is given, and does not keep the source's `$id`,
