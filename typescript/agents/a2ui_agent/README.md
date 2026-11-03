@@ -155,6 +155,24 @@ if (!handled) runModelTurn(fromRenderer);
 
 The processor keeps no state between messages, so build one per agent, or one per request from the catalogs the request uses.
 
+### Calling renderer functions
+
+An agent calls a function the renderer implements with `callRendererFunction`. `RendererFunctionCalls` builds the message and gives a promise of the result, which `resolve` settles when the `rendererFunctionResponse` arrives. Pass `resolve` to the processor as `onRendererFunctionResponse`:
+
+```ts
+const calls = new RendererFunctionCalls({defaultTimeoutMs: 10_000});
+const messages = new RendererToAgentMessageProcessor({
+  catalogs: [catalog],
+  onRendererFunctionResponse: calls.resolve,
+});
+
+const [message, locale] = calls.call<string>({catalogId: catalog.id, name: 'getLocale'});
+send(message);
+console.log(await locale); // once the renderer's response has gone through messages.processMessage
+```
+
+Each instance keeps its pending calls in memory, so a response must reach the same instance that made the call, over a connection that stays open such as a WebSocket. A call fails with `TIMEOUT` when no response arrives in time, with `CANCELLED` when it is cancelled or the instance disposed, and with the renderer's error code when the renderer reports one.
+
 ## Development
 
 ```sh

@@ -123,7 +123,7 @@ describe('RendererToAgentMessageProcessor', () => {
       expect(agentSdk.RendererToAgentMessageProcessor).toBe(RendererToAgentMessageProcessor);
       expect('AgentFunctionRegistry' in agentSdk).toBe(false);
       expect('RendererMessageRouter' in agentSdk).toBe(false);
-      expect('RendererFunctionCalls' in agentSdk).toBe(false);
+      expect('RendererFunctionCalls' in agentSdk).toBe(true);
     });
   });
 
