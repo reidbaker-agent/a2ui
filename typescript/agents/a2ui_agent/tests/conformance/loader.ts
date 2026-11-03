@@ -121,11 +121,8 @@ const UNIMPLEMENTED_ACTIONS = new Map<string, string>(
     'declare_agent_functions',
     'handle_agent_function',
     'validate_payload',
-    'call_renderer_function',
-  ].map((action): [string, string] => [
-    action,
-    'this SDK does not implement agent functions or calls to renderer functions yet',
-  ]),
+    'process_renderer_message',
+  ].map((action): [string, string] => [action, 'this SDK does not implement agent functions yet']),
 );
 
 export function classify(testCase: TestCase) {
