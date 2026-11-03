@@ -8,11 +8,6 @@
   To migrate, bind `value` to a data model path, such as
   `{"@path": "/form/email"}`. The path does not have to exist yet
   ([#3830](https://github.com/a2ui-project/a2ui/issues/3830), [#3868](https://github.com/a2ui-project/a2ui/pull/3868)).
-- Added `AgentFunction`, `AgentFunctionContext`, `AgentFunctionHandler`, and
-  `Catalog.agentFunctions` (on `Catalog` and `Catalog.copyWith`) for declaring
-  and attaching handlers to v1.0 agent-side catalog functions, along with
-  `RpcErrorCode.tooManyPending` and custom wire error code support on
-  `A2uiRpcError` (`A2uiRpcError.custom`).
 - (v1_0) The basic catalog `regex` function's `pattern` description now names the A2UI regex dialect and its safety limits ([#3820](https://github.com/a2ui-project/a2ui/pull/3820)).
 - **Breaking:** (v1_0) An agent error or timeout (`A2uiRpcError`) in a
   dynamic value, a `checks` rule or an action is reported on
@@ -103,6 +98,29 @@
   of the list the processor was created with, and adding to it throws
   `UnsupportedError`. Pass every catalog when creating the processor
   ([#3597](https://github.com/a2ui-project/a2ui/issues/3597)).
+- (v1_0) Added agent functions: catalog functions whose handler runs on the
+  agent when a renderer sends `callAgentFunction`
+  ([#3536](https://github.com/a2ui-project/a2ui/issues/3536),
+  [#3861](https://github.com/a2ui-project/a2ui/pull/3861)).
+  - `AgentFunction` pairs a function signature with an `AgentFunctionHandler`,
+    which receives the validated arguments and an `AgentFunctionContext` (the
+    catalog, surface and call ids). One built with the constructor is
+    `rendererOnly`. `AgentFunction.fromApi` attaches a handler to a
+    declaration the catalog already has, such as one read by
+    `Catalog.fromJson`, and keeps its `allowedCallers`; it throws
+    `A2uiCatalogError` for an `agentOnly` declaration, which a renderer may
+    never call.
+  - `Catalog.copyWith(agentFunctions: [...])` adds agent functions to a
+    catalog: one built with `fromApi` takes the place of its declaration, so
+    the catalog document is unchanged, and any other is appended. It throws
+    `A2uiCatalogError` for the same name given twice, for a name another
+    function already has, and for a `fromApi` function whose declaration the
+    catalog doesn't have. An agent function can also be listed in `functions`
+    when building a catalog.
+  - `Catalog.agentFunctions` and `Catalog.rendererFunctions` list a catalog's
+    functions that run on the agent and on the renderer.
+  - `A2uiRpcError.custom` carries an error code the protocol doesn't define,
+    such as one an agent function reports.
 - Added `MessageErrorMapper`, `SurfaceGroupModel.onError`, and
   `MessageProcessor.processMessagesWithErrors` for mapping `A2uiError`
   exceptions into structured wire-format `ErrorMessage` envelopes, and
