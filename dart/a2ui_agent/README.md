@@ -242,6 +242,28 @@ every conversation, or one can be built per request from the active catalogs.
 A message the protocol doesn't define, or a `callAgentFunction` without a
 `functionCallId`, throws `A2uiValidationError`.
 
+### Calling renderer functions
+
+An agent that keeps a connection to the renderer open, such as a WebSocket,
+can call a renderer function and wait for its result with
+`RendererFunctionCalls`. Its `resolve` settles each call from the renderer's
+`rendererFunctionResponse`:
+
+```dart
+final calls = RendererFunctionCalls();
+final processor = RendererToAgentMessageProcessor(
+  catalogs: catalogs,
+  onRendererFunctionResponse: calls.resolve,
+);
+final (CallRendererFunctionMessage message, Future<Object?> result) = calls
+    .call(catalogId: catalogId, name: 'scrollIntoView', args: {'id': 'row-4'});
+sendToRenderer([message]);
+final Object? value = await result; // or throws A2uiRpcError
+```
+
+A call times out after 30 seconds unless given another timeout. `dispose`
+cancels the calls still pending, for example when the connection closes.
+
 ## Tests
 
 [test/conformance](test/conformance) runs every shared agent suite this API

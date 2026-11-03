@@ -247,6 +247,17 @@
     `AgentFunctionContext`, `AgentFunctionHandler`, `A2uiRpcError`,
     `RpcErrorCode`, and the v1.0 renderer-to-agent and function response
     message types.
+- (v1_0) Added `RendererFunctionCalls`, which calls renderer functions from
+  the agent ([#3535](https://github.com/a2ui-project/a2ui/issues/3535)).
+  `call` checks the call and builds the `callRendererFunction` message to
+  send, with a `Future` for the result; an empty `surfaceId` counts as
+  omitted. `resolve`, passed to `RendererToAgentMessageProcessor` as
+  `onRendererFunctionResponse`, settles the call with the renderer's value or
+  error. A malformed response that names a pending call fails it right away.
+  A call times out after `defaultRendererCallTimeout` (30 seconds) unless
+  given another timeout, `maxPending` caps the calls pending at once
+  (`TOO_MANY_PENDING`), and `dispose` cancels the pending calls. The library
+  also re-exports `CallRendererFunctionMessage`.
 - The v1.0 schema in the direct JSON prompt no longer says that `createSurface`
   needs later messages for its components and data. They can be sent inline in
   `createSurface` or in later `updateComponents` and `updateDataModel` messages.
