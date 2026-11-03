@@ -116,9 +116,7 @@ const SUPPORTED_FORMATS = new Set(['direct_json', 'express']);
  * Conformance actions this SDK has no implementation for. Their cases are skipped with the
  * reason given, rather than falling through the harness and passing without running.
  */
-const UNIMPLEMENTED_ACTIONS = new Map<string, string>([
-  ['call_renderer_function', 'calls to renderer functions moved to a follow-up pull request'],
-]);
+const UNIMPLEMENTED_ACTIONS = new Map<string, string>([]);
 
 export function classify(testCase: TestCase) {
   const superseded = SUPERSEDED.get(testCase.name) ?? SUPERSEDED_ACTIONS.get(testCase.action);
